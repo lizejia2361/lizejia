@@ -212,5 +212,5 @@ module wallace_32_8(
 
 我还写了一个简单的16位有符号数乘法器进行结果的比对来验证结果的准确性。（ [mul_tc_16_16_ref.v](代码\homework-master\prj_mul_tc_16_16\src\mul_tc_16_16_ref.v) ）
 结果：
-！[](https://github.com/lizejia2361/lizejia/blob/main/final_wave.png)
+![](https://github.com/lizejia2361/lizejia/blob/main/final_wave.png)
 
