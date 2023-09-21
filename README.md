@@ -10,11 +10,12 @@
 
 Figure 一图为我在LogicCircuit这个软件中做的乘法器，二图为modelsim仿真结果（ [multiplier_2x2.v](代码\multiplier_2x2.v)， [multiplier_2x2_tb.vt](代码\multiplier_2x2_tb.vt)  ）
 
-<img src="C:\Users\ASUS\Desktop\代码\LogicCircuit.png" alt="LogicCircuit" style="zoom: 67%;" />
+![](https://github.com/lizejia2361/lizejia/blob/main/LogicCircuit.png)
 
-![wave1](C:\Users\ASUS\Desktop\代码\wave1.jpg)
+![](https://github.com/lizejia2361/lizejia/blob/main/wave1.jpg)
 
-但是，这样一个二位的乘法器，也只能实现3以内的乘法。想要进行更大的数的乘法就要对加法器进行“位拓展”，当然这也是不难实现的。<img src="C:\Users\ASUS\Desktop\代码\length.png" alt="length" style="zoom:60%;" />类似这样。
+但是，这样一个二位的乘法器，也只能实现3以内的乘法。想要进行更大的数的乘法就要对加法器进行“位拓展”，当然这也是不难实现的。
+![](https://github.com/lizejia2361/lizejia/blob/main/length.png)类似这样。
 
  
 
@@ -28,17 +29,17 @@ Figure 一图为我在LogicCircuit这个软件中做的乘法器，二图为mode
 
 ​		首先第一点，乘法器的位数为16位，这意味着这个乘法器可以进行两个65535以内的数相乘的运算。而位数的增加虽然意味着运算范围的增大，但也会增加硬件的成本和功耗。因此，要点三，对乘法器进行加速就显得非常有必要。
 
-​		第二是有符号数，由于在假期里，高鹏老师曾让我们学习过一本名叫Verilog_VLSI的书。在书中有一个实验是完成一个加法器实现两个有符号数的加减，于是我想先学习如何实现有符号数的乘法器。为此，我先是在哔站上找了一些视频，重温了一下计算机是如何实现乘法的。 <img src="C:\Users\ASUS\Desktop\代码\progress1.png" alt="progress1" style="zoom:60%;" />
+​		第二是有符号数，由于在假期里，高鹏老师曾让我们学习过一本名叫Verilog_VLSI的书。在书中有一个实验是完成一个加法器实现两个有符号数的加减，于是我想先学习如何实现有符号数的乘法器。为此，我先是在哔站上找了一些视频，重温了一下计算机是如何实现乘法的。 
+![](https://github.com/lizejia2361/lizejia/blob/main/progress1.png)
 
 ​		从图中可以知道，乘法运算时，需要用到三个寄存器和一个加法器。一个四位的寄存器用来存储乘数（由于这是一个四位的乘法器），两个八位的寄存器分别存储被乘数和乘积，同时用来存储被乘数的寄存器还应该有左移的功能，存储乘数的寄存器有右移功能用来对齐。
 
 下图为工作流程：
 
-<img src="C:\Users\ASUS\Desktop\代码\progress2.png" alt="progress2" style="zoom:60%;" />
-
+![](https://github.com/lizejia2361/lizejia/blob/main/progress2.png)
 ​		但是像上图这样进行乘法运算的话左移，右移，相加都需要一个时钟周期，如果是一个32位的乘法器，进行一次运算就需要将近一百个时钟周期，因此这个乘法器还需要优化。最简单的就是让这三步并行起来，因为三者是不冲突的。下图就是并行后的流程图。
 
-![progress_improve](C:\Users\ASUS\Desktop\代码\progress_improve.png)
+![](https://github.com/lizejia2361/lizejia/blob/main/progress_improve.png)
 
 ​	视屏来源（【计算机组成 4 乘法器和除法器】https://www.bilibili.com/video/BV1uY411J7Vs?p=4&vd_source=59c53bb9449f5755f3333acdc359b185）
 
@@ -64,9 +65,7 @@ Figure 一图为我在LogicCircuit这个软件中做的乘法器，二图为mode
 ​		如果两者都是无符号数 那就直接用*号连接即可，如果两者都是有符号数，那也可以用 *号连接，用补码的方式计算。而如果一个是有符号数，一个是无符号数，直接运算时将有符号数当无符号数来运算，最后用$signed（）机制来解决。那么signed的修饰是为什么呢，是**为了区分有符号数和无符号数的加法和乘法吗？** 其实不是的，因为有符号数和无符号数据的加法强结果和乘法器结构是一样的，**signed的真正作用是决定如何对操作数扩位的问题**。
 
 ​		于是，我仿照文章中的代码，自己编写了一个简单的testbench来验证一下，并仿真出了波形。
-
-<img src="C:\Users\ASUS\Desktop\代码\wave2.png" alt="wave2" style="zoom: 67%;" />
-
+![](https://github.com/lizejia2361/lizejia/blob/main/wave2.png)
 由图中的数据可以看出，这个乘法器就实现了有符号数的乘法。如图所示，5*8=40（对应情况一，都是无符号数）， 10 * -3=-30（对应情况二，一个为无符号数，一个为有符号数），-20*-1=20（对应情况三，都是有符号数）。（ [Multply_Signed_Unsigned.v](代码\Multply_Signed_Unsigned.v)   ， [Multply_Signed_Unsigned_tb.vt](代码\Multply_Signed_Unsigned_tb.vt) ）
 
 ​		解决了问题一和问题二，最后就要来解决加速的问题了。经过摸索，以及学长的介绍，我了解到一个能够加速的乘法器，常常是应用了booth算法和wallace树结构。于是通过学校的VPN，在万方上找到了这么一篇关于实现16位有符号数加法器的论文并进行阅读学习。
@@ -75,9 +74,10 @@ Figure 一图为我在LogicCircuit这个软件中做的乘法器，二图为mode
 
 ​		之后我又在哔站上找到了一个32位快速乘法器的视频，详细学习了booth算法（【【IC设计】【前端到后端全流程】【基于Booth2算法的32位乘法器】3-Booth算法与Booth2算法讲解以及RTL设计】https://www.bilibili.com/video/BV1s84y1W72L?vd_source=59c53bb9449f5755f3333acdc359b185）
 
-![booth1](C:\Users\ASUS\Desktop\代码\booth1.jpg)
+![](https://github.com/lizejia2361/lizejia/blob/main/booth1.jpg)
 
-booth算法虽然化简为繁，但是却简化了运算（增加0的个数），由于二阶booth算法相较于一阶的更有优势，所以运用了二阶的booth算法![booth2](C:\Users\ASUS\Desktop\代码\booth2.jpg)
+booth算法虽然化简为繁，但是却简化了运算（增加0的个数），由于二阶booth算法相较于一阶的更有优势，所以运用了二阶的booth算法
+![](https://github.com/lizejia2361/lizejia/blob/main/booth2.jpg)
 
 一阶booth算法每次编码只有两位，而二阶booth算法每次编码有三位，这使得部分积的数目只有一阶booth的一半。
 
@@ -87,13 +87,13 @@ booth算法虽然化简为繁，但是却简化了运算（增加0的个数）�
 
 ​		首先是booth编码器的编写，booth编码器的原理，简单理解就是把乘数中的每一个1看成“+2-1”。具体的数学原理及两位booth编码的实现逻辑如下：
 
-![booth原理](C:\Users\ASUS\Desktop\代码\booth原理.png)
+![](https://github.com/lizejia2361/lizejia/blob/main/booth%E5%8E%9F%E7%90%86.png)
 
 booth模块就相当于一个解码器，将16位的输入解码成32位的输出，并且通过信号控制来判断是否需要为结果加一的操作。即booth模块通过解码生成了32位的部分积用于后续操作。
 
  [booth_decoder.v](代码\homework-master\prj_mul_tc_16_16\src\booth_decoder.v)
 
-![choose](C:\Users\ASUS\Desktop\代码\choose.png)
+![](https://github.com/lizejia2361/lizejia/blob/main/choose.png)
 
 这就是一个 Booth 解码器模块，它将一个乘数 `xin` 和一个3位的控制信号 `yin` 转换成一个部分积 `xout`。另外，它也提供了一个 `cout` 信号，指示是否需要在结果上加1。
 
@@ -154,7 +154,7 @@ module booth_decoder_8 (
 
 这是一层的结构，总共有四层。原理如图：
 
-![压缩机](C:\Users\ASUS\Desktop\代码\压缩机.png)
+![](https://github.com/lizejia2361/lizejia/blob/main/%E5%8E%8B%E7%BC%A9%E6%9C%BA.png)
 
 [wallace_1_8.v](代码\homework-master\prj_mul_tc_16_16\src\wallace_1_8.v) 
 
@@ -198,6 +198,7 @@ module wallace_32_8(
 
 
 之后就是制作一个32位先行进位加法器，使得可以同时对多个数据进行加操作（块内并行和块间并行，同时处理多个进位）。
+![](https://github.com/lizejia2361/lizejia/blob/main/32%E4%BD%8D%E5%85%88%E8%A1%8C%E8%BF%9B%E4%BD%8D%E5%8A%A0%E6%B3%95%E5%99%A8.png)
 
 [adder32.v](代码\homework-master\prj_mul_tc_16_16\src\adder32.v) 
 
@@ -210,5 +211,6 @@ module wallace_32_8(
 [mul_tc_16_16_tb.v](代码\homework-master\prj_mul_tc_16_16\src\mul_tc_16_16_tb.v) 
 
 我还写了一个简单的16位有符号数乘法器进行结果的比对来验证结果的准确性。（ [mul_tc_16_16_ref.v](代码\homework-master\prj_mul_tc_16_16\src\mul_tc_16_16_ref.v) ）
+结果：
+！[](https://github.com/lizejia2361/lizejia/blob/main/final_wave.png)
 
-（具体文件已经放在我的GitHub仓库，仓库地址：）
