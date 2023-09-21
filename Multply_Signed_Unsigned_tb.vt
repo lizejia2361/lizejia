@@ -1,0 +1,41 @@
+module Multply_Signed_Unsigned_tb();
+
+    // 信号声明
+    reg [7:0] dina;
+    reg signed [7:0] dinb;
+    wire signed [15:0] dout;
+
+    // 模块实例化
+    Multply_Signed_Unsigned dut (
+        .dina(dina),
+        .dinb(dinb),
+        .dout(dout)
+    );
+
+    // 测试过程
+    initial begin
+        // 初始化输入信号
+        dina = 5; // 任意值
+        dinb = 8; // 任意值
+        
+        // 等待一段时间以使模块处理输入
+        #100;
+		 dina = 10; // 任意值
+        dinb = -3; // 任意值
+        
+        // 等待一段时间以使模块处理输入
+        #100;
+		 dina = -20; // 任意值
+        dinb = -1; // 任意值
+        
+        // 等待一段时间以使模块处理输入
+        #100;
+
+        // 检查输出信号
+        $display("dout = %d", $signed(dout));
+        
+        // 结束仿真
+        $stop;
+    end
+
+endmodule
